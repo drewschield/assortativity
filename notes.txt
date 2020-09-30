@@ -1,0 +1,67 @@
+##########################################################################################
+#																						 #
+#																						 #	
+#																						 #
+#			 Preliminary analysis of assortativity data - mate pairs from China			 #
+#																						 #
+#																						 #
+#																						 #
+##########################################################################################
+
+Created 08.25.2020 by Drew Schield
+
+This file explains steps taken to establish mate pairings for analysis of phenotypic,
+isotope, and genotype variables for pairs.
+
+##########################################################################################
+#				  																		 #
+#				  		 		   General Organization									 #
+#				  																		 #
+##########################################################################################
+
+The input data for the steps below are in:
+`Google Drive/Drew_and_Becca_shared_folder/projects/hirundo_assortativity/data`
+
+The initial input file is: `phenotype+ancestry+isotope_assignment+geo_data_08.10.20.FIX.txt`.
+
+The 'FIX' was appended to the file after replacing any EMPTY cells with 'NA' in excel, to
+avoid downstream failures to read in data in Python or R.
+
+##########################################################################################
+#				  		 	  Write data for pairs of mates								 #
+##########################################################################################
+
+We want to have paired information for sets of mates in order to compare variables across
+pairings. To do this, I wrote a Python script `relate_pairs.py`, which identifies pairs
+and writes their combined data to a line after first checking that data for the pair was
+not already written.
+
+------------------------------------------------------------------------------------------
+Set up environment:
+------------------------------------------------------------------------------------------
+
+$cd `/Google Drive/Drew_and_Becca_shared_folder/projects/hirundo_assortativity/data
+
+------------------------------------------------------------------------------------------
+Ran `relate_pairs.py` script to output combined, non-redundant data for pairs:
+------------------------------------------------------------------------------------------
+
+usage: relate_pairs.py <input_data> <output_paired_data>
+
+$python relate_pairs.py phenotype+ancestry+isotope_assignment+geo_data_08.10.20.FIX.txt PAIRS_phenotype+ancestry+isotope_assignment+geo_data_08.10.20.FIX.txt
+
+------------------------------------------------------------------------------------------
+Doctored output to work in R:
+------------------------------------------------------------------------------------------
+
+I had to make some manual adjustments to the input data prior to analysis in R:
+
+1. R hates that there are spaces in the header line and data entries; I replaced:
+	- ALL spaces in the header line with '_' instead.
+	- ALL spaces in data lines with NOTHING.
+2. R also hates the GPS columns, generally, since these contain special characters. I removed these completely.
+
+The analysis-ready input file is `PAIRS_phenotype+ancestry+isotope_assignment+geo_data_08.10.20.FIX.noGPS.txt`.
+
+
+
