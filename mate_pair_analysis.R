@@ -574,6 +574,64 @@ cor.test(mates$throat.avg.bright.1,mates$vent.avg.bright,method="spearman")     
 cor.test(mates$throat.avg.bright.1,mates$bird_mass,method="spearman")                         
 
 
+### ------------------------------------------------------------------------
+### Examine density distributions for variables-----------------------------
+### ------------------------------------------------------------------------
+
+d.m.anc <- density(mates$proportion.rustica.ancestry,na.rm=T)
+d.f.anc <- density(mates$proportion.rustica.ancestry.1,na.rm=T)
+d.m.rwl <- density(mates$mean_rwl)
+d.f.rwl <- density(mates$mean_rwl.1)
+m.ts.mean <- (mates$mean_rts + mates$mean_lts)/2
+f.ts.mean <- (mates$mean_rts.1 + mates$mean_lts.1)/2
+d.m.ts <- density(m.ts.mean,na.rm=T)
+d.f.ts <- density(f.ts.mean,na.rm=T)
+d.m.breast <- density(mates$breast.avg.bright,na.rm=T)
+d.f.breast <- density(mates$breast.avg.bright.1,na.rm=T)
+d.m.throat <- density(mates$throat.avg.bright,na.rm=T)
+d.f.throat <- density(mates$throat.avg.bright.1,na.rm=T)
+d.m.belly <- density(mates$belly.avg.bright,na.rm=T)
+d.f.belly <- density(mates$belly.avg.bright.1,na.rm=T)
+d.m.vent <- density(mates$vent.avg.bright,na.rm=T)
+d.f.vent <- density(mates$vent.avg.bright.1,na.rm=T)
+d.m.d2h <- density(mates$d2h,na.rm=T)
+d.f.d2h <- density(mates$d2h.1,na.rm=T)
+d.m.c13 <- density(mates$d13C_VPDB,na.rm=T)
+d.f.c13 <- density(mates$d13C_VPDB.1,na.rm=T)
+d.m.mass <- density(mates$bird_mass,na.rm=T)
+d.f.mass <- density(mates$bird_mass.1,na.rm=T)
+
+
+par(mfrow=c(3,4))
+plot(d.m.anc,col='darkorange',lwd=2)
+lines(d.f.anc,col='turquoise3',lwd=2)
+
+plot(d.f.d2h,col='turquoise3',lwd=2)
+lines(d.m.d2h,col='darkorange',lwd=2)
+
+plot(d.m.c13,col='darkorange',lwd=2)
+lines(d.f.c13,col='turquoise3',lwd=2)
+
+plot(d.f.rwl,col='turquoise',lwd=2)
+lines(d.m.rwl,col='darkorange',lwd=2)
+
+plot(d.f.ts,col='turquoise3',lwd=2,xlim=c(60,140))
+lines(d.m.ts,col='darkorange',lwd=2)
+
+plot(d.f.breast,col='turquoise3',lwd=2)
+lines(d.m.breast,col='darkorange',lwd=2)
+
+plot(d.m.throat,col='darkorange',lwd=2)
+lines(d.f.throat,col='turquoise3',lwd=2)
+
+plot(d.f.belly,col='turquoise3',lwd=2)
+lines(d.m.belly,col='darkorange',lwd=2)
+
+plot(d.f.vent,col='turquoise3',lwd=2)
+lines(d.m.vent,col='darkorange',lwd=2)
+
+plot(d.m.mass,col='darkorange',lwd=2)
+lines(d.f.mass,col='turquoise3',lwd=2)
 
 
 
