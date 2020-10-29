@@ -10,10 +10,15 @@
 
 rm(list = ls())
 
-
 ### Load dependencies-------------------------------------------------------
 
+install.packages("rstatix")
+install.packages("ggpubr")
+install.packages("tibble")
+
 library(Rmisc)
+library(rstatix)
+library(ggpubr)
 
 ### Read in data------------------------------------------------------------
 
@@ -162,6 +167,416 @@ cor.test(mates$bird_mass,mates$bird_mass.1,method="spearman")
 
 plot(mates$bird_mass,mates$proportion.rustica.ancestry,pch=20,col=mates$location)
 cor.test(mates$bird_mass,mates$proportion.rustica.ancestry,method="spearman")
+
+### -------------------------------------------------------------------------
+### Analysis of overall relationships
+### -------------------------------------------------------------------------
+
+### Compute correlation matrix for all variables
+
+mates.prune <- mates[, c(16,17,21,22,23,25,29,33,37,51,70,87,88,92,93,94,96,100,104,108,122,141)]
+head(mates.prune, 5)
+
+# Set correlation matrix
+mates.cor_mat <- mates.prune %>% cor_mat()
+# Get p-values
+mates.cor_mat %>% cor_get_pval()
+
+write.table(mates.cor_mat, "/Volumes/GoogleDrive/My Drive/github/assortativity/data/correlation_table.txt",quote=FALSE,row.names=FALSE,sep='\t')
+write.table(mates.cor_mat %>% cor_get_pval(), "/Volumes/GoogleDrive/My Drive/github/assortativity/data/correlation_table_p-val.txt",quote=FALSE,row.names=FALSE,sep='\t')
+
+# Specify color palette and plot correlation matrix
+cor.palette <- get_palette("PuOr",200)
+china.cor_mat %>%
+  pull_lower_triangle() %>%
+  cor_plot(label = FALSE,insignificant='cross',method='circle',palette = cor.palette)
+# Output long-format matrix
+write.table(china.cor_mat %>% cor_gather(),"correlation_table_long.txt",quote=FALSE,row.names=FALSE,sep='\t')
+
+
+### ------------------------------------------------------------------------
+### Examine relationships between male and female variables-----------------
+### ------------------------------------------------------------------------
+
+### Here, the goal is to look at preliminary Spearman's correlations between
+### paired male and female variables, looking in both directions...
+
+# FEMALE variables against MALE ancestry
+
+par(mfrow=c(4,3))
+
+plot(mates$proportion.rustica.ancestry,mates$d2h.1,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry,mates$d13C_VPDB.1,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry,mates$mean_rwl.1,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry,mates$mean_rts.1,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry,mates$mean_lts.1,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry,mates$belly.avg.bright.1,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry,mates$breast.avg.bright.1,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry,mates$throat.avg.bright.1,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry,mates$vent.avg.bright.1,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry,mates$breast.avg.bright.1,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry,mates$bird_mass.1,pch=20,col=mates$location)
+
+cor.test(mates$proportion.rustica.ancestry,mates$d2h.1,method="spearman")                               ###
+cor.test(mates$proportion.rustica.ancestry,mates$d13C_VPDB.1,method="spearman")                         ###
+cor.test(mates$proportion.rustica.ancestry,mates$mean_rwl.1,method="spearman")                          ###
+cor.test(mates$proportion.rustica.ancestry,mates$mean_rts.1,method="spearman")
+cor.test(mates$proportion.rustica.ancestry,mates$mean_lts.1,method="spearman")
+cor.test(mates$proportion.rustica.ancestry,mates$belly.avg.bright.1,method="spearman")
+cor.test(mates$proportion.rustica.ancestry,mates$breast.avg.bright.1,method="spearman")
+cor.test(mates$proportion.rustica.ancestry,mates$throat.avg.bright.1,method="spearman")
+cor.test(mates$proportion.rustica.ancestry,mates$vent.avg.bright.1,method="spearman")                   ###
+cor.test(mates$proportion.rustica.ancestry,mates$bird_mass.1,method="spearman")
+
+# MALE variables against FEMALE ancestry
+
+par(mfrow=c(4,3))
+
+plot(mates$proportion.rustica.ancestry.1,mates$d2h,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry.1,mates$d13C_VPDB,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry.1,mates$mean_rwl,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry.1,mates$mean_rts,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry.1,mates$mean_lts,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry.1,mates$belly.avg.bright,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry.1,mates$breast.avg.bright,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry.1,mates$throat.avg.bright,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry.1,mates$vent.avg.bright,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry.1,mates$breast.avg.bright,pch=20,col=mates$location)
+plot(mates$proportion.rustica.ancestry.1,mates$bird_mass,pch=20,col=mates$location)
+
+cor.test(mates$proportion.rustica.ancestry.1,mates$d2h,method="spearman")                               
+cor.test(mates$proportion.rustica.ancestry.1,mates$d13C_VPDB,method="spearman")                         
+cor.test(mates$proportion.rustica.ancestry.1,mates$mean_rwl,method="spearman")                          ###
+cor.test(mates$proportion.rustica.ancestry.1,mates$mean_rts,method="spearman")                          ###
+cor.test(mates$proportion.rustica.ancestry.1,mates$mean_lts,method="spearman")                          ###
+cor.test(mates$proportion.rustica.ancestry.1,mates$belly.avg.bright,method="spearman")
+cor.test(mates$proportion.rustica.ancestry.1,mates$breast.avg.bright,method="spearman")
+cor.test(mates$proportion.rustica.ancestry.1,mates$throat.avg.bright,method="spearman")
+cor.test(mates$proportion.rustica.ancestry.1,mates$vent.avg.bright,method="spearman")                   
+cor.test(mates$proportion.rustica.ancestry.1,mates$bird_mass,method="spearman")
+
+
+# FEMALE variables against MALE hydrogen isotope
+
+par(mfrow=c(4,3))
+
+plot(mates$d2h,mates$proportion.rustica.ancestry.1,pch=20,col=mates$location)
+plot(mates$d2h,mates$d13C_VPDB.1,pch=20,col=mates$location)
+plot(mates$d2h,mates$mean_rwl.1,pch=20,col=mates$location)
+plot(mates$d2h,mates$mean_rts.1,pch=20,col=mates$location)
+plot(mates$d2h,mates$mean_lts.1,pch=20,col=mates$location)
+plot(mates$d2h,mates$belly.avg.bright.1,pch=20,col=mates$location)
+plot(mates$d2h,mates$breast.avg.bright.1,pch=20,col=mates$location)
+plot(mates$d2h,mates$throat.avg.bright.1,pch=20,col=mates$location)
+plot(mates$d2h,mates$vent.avg.bright.1,pch=20,col=mates$location)
+plot(mates$d2h,mates$bird_mass.1,pch=20,col=mates$location)
+
+cor.test(mates$d2h,mates$proportion.rustica.ancestry.1,method="spearman")
+cor.test(mates$d2h,mates$d13C_VPDB.1,method="spearman")                         ###
+cor.test(mates$d2h,mates$mean_rwl.1,method="spearman")                          
+cor.test(mates$d2h,mates$mean_rts.1,method="spearman")
+cor.test(mates$d2h,mates$mean_lts.1,method="spearman")
+cor.test(mates$d2h,mates$belly.avg.bright.1,method="spearman")                  ###
+cor.test(mates$d2h,mates$breast.avg.bright.1,method="spearman")                 ###
+cor.test(mates$d2h,mates$throat.avg.bright.1,method="spearman")
+cor.test(mates$d2h,mates$vent.avg.bright.1,method="spearman")                   ###
+cor.test(mates$d2h,mates$bird_mass.1,method="spearman")
+
+# MALE variables against FEMALE hydrogen isotope
+
+par(mfrow=c(4,3))
+
+plot(mates$d2h.1,mates$proportion.rustica.ancestry,pch=20,col=mates$location)
+plot(mates$d2h.1,mates$d13C_VPDB,pch=20,col=mates$location)
+plot(mates$d2h.1,mates$mean_rwl,pch=20,col=mates$location)
+plot(mates$d2h.1,mates$mean_rts,pch=20,col=mates$location)
+plot(mates$d2h.1,mates$mean_lts,pch=20,col=mates$location)
+plot(mates$d2h.1,mates$belly.avg.bright,pch=20,col=mates$location)
+plot(mates$d2h.1,mates$breast.avg.bright,pch=20,col=mates$location)
+plot(mates$d2h.1,mates$throat.avg.bright,pch=20,col=mates$location)
+plot(mates$d2h.1,mates$vent.avg.bright,pch=20,col=mates$location)
+plot(mates$d2h.1,mates$bird_mass,pch=20,col=mates$location)
+
+cor.test(mates$d2h.1,mates$proportion.rustica.ancestry,method="spearman")       ###
+cor.test(mates$d2h.1,mates$d13C_VPDB,method="spearman")                        
+cor.test(mates$d2h.1,mates$mean_rwl,method="spearman")                         
+cor.test(mates$d2h.1,mates$mean_rts,method="spearman")
+cor.test(mates$d2h.1,mates$mean_lts,method="spearman")
+cor.test(mates$d2h.1,mates$belly.avg.bright,method="spearman")                 
+cor.test(mates$d2h.1,mates$breast.avg.bright,method="spearman")                
+cor.test(mates$d2h.1,mates$throat.avg.bright,method="spearman")
+cor.test(mates$d2h.1,mates$vent.avg.bright,method="spearman")                  
+cor.test(mates$d2h.1,mates$bird_mass,method="spearman")
+
+
+# FEMALE variables against MALE carbon isotope
+
+par(mfrow=c(4,3))
+
+plot(mates$d13C_VPDB,mates$proportion.rustica.ancestry.1,pch=20,col=mates$location)
+plot(mates$d13C_VPDB,mates$d2h.1,pch=20,col=mates$location)
+plot(mates$d13C_VPDB,mates$mean_rwl.1,pch=20,col=mates$location)
+plot(mates$d13C_VPDB,mates$mean_rts.1,pch=20,col=mates$location)
+plot(mates$d13C_VPDB,mates$mean_lts.1,pch=20,col=mates$location)
+plot(mates$d13C_VPDB,mates$belly.avg.bright.1,pch=20,col=mates$location)
+plot(mates$d13C_VPDB,mates$breast.avg.bright.1,pch=20,col=mates$location)
+plot(mates$d13C_VPDB,mates$throat.avg.bright.1,pch=20,col=mates$location)
+plot(mates$d13C_VPDB,mates$vent.avg.bright.1,pch=20,col=mates$location)
+plot(mates$d13C_VPDB,mates$bird_mass.1,pch=20,col=mates$location)
+
+cor.test(mates$d13C_VPDB,mates$proportion.rustica.ancestry.1,method="spearman")
+cor.test(mates$d13C_VPDB,mates$d2h.1,method="spearman")                         
+cor.test(mates$d13C_VPDB,mates$mean_rwl.1,method="spearman")                          
+cor.test(mates$d13C_VPDB,mates$mean_rts.1,method="spearman")
+cor.test(mates$d13C_VPDB,mates$mean_lts.1,method="spearman")
+cor.test(mates$d13C_VPDB,mates$belly.avg.bright.1,method="spearman")                  
+cor.test(mates$d13C_VPDB,mates$breast.avg.bright.1,method="spearman")                 ###
+cor.test(mates$d13C_VPDB,mates$throat.avg.bright.1,method="spearman")                 ###
+cor.test(mates$d13C_VPDB,mates$vent.avg.bright.1,method="spearman")                   
+cor.test(mates$d13C_VPDB,mates$bird_mass.1,method="spearman")
+
+# MALE variables against FEMALE carbon isotope
+
+par(mfrow=c(4,3))
+
+plot(mates$d13C_VPDB.1,mates$proportion.rustica.ancestry,pch=20,col=mates$location)
+plot(mates$d13C_VPDB.1,mates$d2h,pch=20,col=mates$location)
+plot(mates$d13C_VPDB.1,mates$mean_rwl,pch=20,col=mates$location)
+plot(mates$d13C_VPDB.1,mates$mean_rts,pch=20,col=mates$location)
+plot(mates$d13C_VPDB.1,mates$mean_lts,pch=20,col=mates$location)
+plot(mates$d13C_VPDB.1,mates$belly.avg.bright,pch=20,col=mates$location)
+plot(mates$d13C_VPDB.1,mates$breast.avg.bright,pch=20,col=mates$location)
+plot(mates$d13C_VPDB.1,mates$throat.avg.bright,pch=20,col=mates$location)
+plot(mates$d13C_VPDB.1,mates$vent.avg.bright,pch=20,col=mates$location)
+plot(mates$d13C_VPDB.1,mates$bird_mass,pch=20,col=mates$location)
+
+cor.test(mates$d13C_VPDB.1,mates$proportion.rustica.ancestry,method="spearman")       ###
+cor.test(mates$d13C_VPDB.1,mates$d2h,method="spearman")                               ###                 
+cor.test(mates$d13C_VPDB.1,mates$mean_rwl,method="spearman")                          ###            
+cor.test(mates$d13C_VPDB.1,mates$mean_rts,method="spearman")
+cor.test(mates$d13C_VPDB.1,mates$mean_lts,method="spearman")
+cor.test(mates$d13C_VPDB.1,mates$belly.avg.bright,method="spearman")                 
+cor.test(mates$d13C_VPDB.1,mates$breast.avg.bright,method="spearman")                
+cor.test(mates$d13C_VPDB.1,mates$throat.avg.bright,method="spearman")
+cor.test(mates$d13C_VPDB.1,mates$vent.avg.bright,method="spearman")                  
+cor.test(mates$d13C_VPDB.1,mates$bird_mass,method="spearman")
+
+
+# FEMALE variables against MALE right wing length
+
+par(mfrow=c(4,3))
+
+plot(mates$mean_rwl,mates$proportion.rustica.ancestry.1,pch=20,col=mates$location)
+plot(mates$mean_rwl,mates$d2h.1,pch=20,col=mates$location)
+plot(mates$mean_rwl,mates$d13C_VPDB.1,pch=20,col=mates$location)
+plot(mates$mean_rwl,mates$mean_rts.1,pch=20,col=mates$location)
+plot(mates$mean_rwl,mates$mean_lts.1,pch=20,col=mates$location)
+plot(mates$mean_rwl,mates$belly.avg.bright.1,pch=20,col=mates$location)
+plot(mates$mean_rwl,mates$breast.avg.bright.1,pch=20,col=mates$location)
+plot(mates$mean_rwl,mates$throat.avg.bright.1,pch=20,col=mates$location)
+plot(mates$mean_rwl,mates$vent.avg.bright.1,pch=20,col=mates$location)
+plot(mates$mean_rwl,mates$bird_mass.1,pch=20,col=mates$location)
+
+cor.test(mates$mean_rwl,mates$proportion.rustica.ancestry.1,method="spearman")       ###
+cor.test(mates$mean_rwl,mates$d2h.1,method="spearman")                         
+cor.test(mates$mean_rwl,mates$d13C_VPDB.1,method="spearman")                         ###                   
+cor.test(mates$mean_rwl,mates$mean_rts.1,method="spearman")
+cor.test(mates$mean_rwl,mates$mean_lts.1,method="spearman")
+cor.test(mates$mean_rwl,mates$belly.avg.bright.1,method="spearman")                  
+cor.test(mates$mean_rwl,mates$breast.avg.bright.1,method="spearman")                 ###
+cor.test(mates$mean_rwl,mates$throat.avg.bright.1,method="spearman")                 
+cor.test(mates$mean_rwl,mates$vent.avg.bright.1,method="spearman")                   ###        
+cor.test(mates$mean_rwl,mates$bird_mass.1,method="spearman")                         ###
+
+# MALE variables against FEMALE right wing length
+
+par(mfrow=c(4,3))
+
+plot(mates$mean_rwl.1,mates$proportion.rustica.ancestry,pch=20,col=mates$location)
+plot(mates$mean_rwl.1,mates$d2h,pch=20,col=mates$location)
+plot(mates$mean_rwl.1,mates$d13C_VPDB,pch=20,col=mates$location)
+plot(mates$mean_rwl.1,mates$mean_rts,pch=20,col=mates$location)
+plot(mates$mean_rwl.1,mates$mean_lts,pch=20,col=mates$location)
+plot(mates$mean_rwl.1,mates$belly.avg.bright,pch=20,col=mates$location)
+plot(mates$mean_rwl.1,mates$breast.avg.bright,pch=20,col=mates$location)
+plot(mates$mean_rwl.1,mates$throat.avg.bright,pch=20,col=mates$location)
+plot(mates$mean_rwl.1,mates$vent.avg.bright,pch=20,col=mates$location)
+plot(mates$mean_rwl.1,mates$bird_mass,pch=20,col=mates$location)
+
+cor.test(mates$mean_rwl.1,mates$proportion.rustica.ancestry,method="spearman")       ###
+cor.test(mates$mean_rwl.1,mates$d2h,method="spearman")                                             
+cor.test(mates$mean_rwl.1,mates$d13C_VPDB,method="spearman")                                    
+cor.test(mates$mean_rwl.1,mates$mean_rts,method="spearman")                          ###
+cor.test(mates$mean_rwl.1,mates$mean_lts,method="spearman")                          ###
+cor.test(mates$mean_rwl.1,mates$belly.avg.bright,method="spearman")                 
+cor.test(mates$mean_rwl.1,mates$breast.avg.bright,method="spearman")                
+cor.test(mates$mean_rwl.1,mates$throat.avg.bright,method="spearman")
+cor.test(mates$mean_rwl.1,mates$vent.avg.bright,method="spearman")                  
+cor.test(mates$mean_rwl.1,mates$bird_mass,method="spearman")
+
+
+# FEMALE variables against MALE right tail streamer
+
+par(mfrow=c(4,3))
+
+plot(mates$mean_rts,mates$proportion.rustica.ancestry.1,pch=20,col=mates$location)
+plot(mates$mean_rts,mates$d2h.1,pch=20,col=mates$location)
+plot(mates$mean_rts,mates$d13C_VPDB.1,pch=20,col=mates$location)
+plot(mates$mean_rts,mates$mean_rwl.1,pch=20,col=mates$location)
+plot(mates$mean_rts,mates$mean_lts.1,pch=20,col=mates$location)
+plot(mates$mean_rts,mates$belly.avg.bright.1,pch=20,col=mates$location)
+plot(mates$mean_rts,mates$breast.avg.bright.1,pch=20,col=mates$location)
+plot(mates$mean_rts,mates$throat.avg.bright.1,pch=20,col=mates$location)
+plot(mates$mean_rts,mates$vent.avg.bright.1,pch=20,col=mates$location)
+plot(mates$mean_rts,mates$bird_mass.1,pch=20,col=mates$location)
+
+cor.test(mates$mean_rts,mates$proportion.rustica.ancestry.1,method="spearman")       ###
+cor.test(mates$mean_rts,mates$d2h.1,method="spearman")                         
+cor.test(mates$mean_rts,mates$d13C_VPDB.1,method="spearman")                                      
+cor.test(mates$mean_rts,mates$mean_rwl.1,method="spearman")                          ###
+cor.test(mates$mean_rts,mates$mean_lts.1,method="spearman")                          ###
+cor.test(mates$mean_rts,mates$belly.avg.bright.1,method="spearman")                  
+cor.test(mates$mean_rts,mates$breast.avg.bright.1,method="spearman")                 
+cor.test(mates$mean_rts,mates$throat.avg.bright.1,method="spearman")                 
+cor.test(mates$mean_rts,mates$vent.avg.bright.1,method="spearman")                         
+cor.test(mates$mean_rts,mates$bird_mass.1,method="spearman")                         ###
+
+# MALE variables against FEMALE right tail streamer
+
+par(mfrow=c(4,3))
+
+plot(mates$mean_rts.1,mates$proportion.rustica.ancestry,pch=20,col=mates$location)
+plot(mates$mean_rts.1,mates$d2h,pch=20,col=mates$location)
+plot(mates$mean_rts.1,mates$d13C_VPDB,pch=20,col=mates$location)
+plot(mates$mean_rts.1,mates$mean_rwl,pch=20,col=mates$location)
+plot(mates$mean_rts.1,mates$mean_lts,pch=20,col=mates$location)
+plot(mates$mean_rts.1,mates$belly.avg.bright,pch=20,col=mates$location)
+plot(mates$mean_rts.1,mates$breast.avg.bright,pch=20,col=mates$location)
+plot(mates$mean_rts.1,mates$throat.avg.bright,pch=20,col=mates$location)
+plot(mates$mean_rts.1,mates$vent.avg.bright,pch=20,col=mates$location)
+plot(mates$mean_rts.1,mates$bird_mass,pch=20,col=mates$location)
+
+cor.test(mates$mean_rts.1,mates$proportion.rustica.ancestry,method="spearman")       
+cor.test(mates$mean_rts.1,mates$d2h,method="spearman")                                             
+cor.test(mates$mean_rts.1,mates$d13C_VPDB,method="spearman")                                    
+cor.test(mates$mean_rts.1,mates$mean_rwl,method="spearman")                          
+cor.test(mates$mean_rts.1,mates$mean_lts,method="spearman")                          ###
+cor.test(mates$mean_rts.1,mates$belly.avg.bright,method="spearman")                 
+cor.test(mates$mean_rts.1,mates$breast.avg.bright,method="spearman")                
+cor.test(mates$mean_rts.1,mates$throat.avg.bright,method="spearman")
+cor.test(mates$mean_rts.1,mates$vent.avg.bright,method="spearman")                  
+cor.test(mates$mean_rts.1,mates$bird_mass,method="spearman")                         ###
+
+
+# FEMALE variables against MALE belly average brightness
+
+par(mfrow=c(4,3))
+
+plot(mates$belly.avg.bright,mates$proportion.rustica.ancestry.1,pch=20,col=mates$location)
+plot(mates$belly.avg.bright,mates$d2h.1,pch=20,col=mates$location)
+plot(mates$belly.avg.bright,mates$d13C_VPDB.1,pch=20,col=mates$location)
+plot(mates$belly.avg.bright,mates$mean_rwl.1,pch=20,col=mates$location)
+plot(mates$belly.avg.bright,mates$mean_lts.1,pch=20,col=mates$location)
+plot(mates$belly.avg.bright,mates$mean_rts.1,pch=20,col=mates$location)
+plot(mates$belly.avg.bright,mates$breast.avg.bright.1,pch=20,col=mates$location)
+plot(mates$belly.avg.bright,mates$throat.avg.bright.1,pch=20,col=mates$location)
+plot(mates$belly.avg.bright,mates$vent.avg.bright.1,pch=20,col=mates$location)
+plot(mates$belly.avg.bright,mates$bird_mass.1,pch=20,col=mates$location)
+
+cor.test(mates$belly.avg.bright,mates$proportion.rustica.ancestry.1,method="spearman")       
+cor.test(mates$belly.avg.bright,mates$d2h.1,method="spearman")                         
+cor.test(mates$belly.avg.bright,mates$d13C_VPDB.1,method="spearman")                                      
+cor.test(mates$belly.avg.bright,mates$mean_rwl.1,method="spearman")                          
+cor.test(mates$belly.avg.bright,mates$mean_lts.1,method="spearman")                          ###
+cor.test(mates$belly.avg.bright,mates$mean_rts.1,method="spearman")                  
+cor.test(mates$belly.avg.bright,mates$breast.avg.bright.1,method="spearman")                 
+cor.test(mates$belly.avg.bright,mates$throat.avg.bright.1,method="spearman")                 ###               
+cor.test(mates$belly.avg.bright,mates$vent.avg.bright.1,method="spearman")                         
+cor.test(mates$belly.avg.bright,mates$bird_mass.1,method="spearman")                         
+
+# MALE variables against FEMALE belly average brightness
+
+par(mfrow=c(4,3))
+
+plot(mates$belly.avg.bright.1,mates$proportion.rustica.ancestry,pch=20,col=mates$location)
+plot(mates$belly.avg.bright.1,mates$d2h,pch=20,col=mates$location)
+plot(mates$belly.avg.bright.1,mates$d13C_VPDB,pch=20,col=mates$location)
+plot(mates$belly.avg.bright.1,mates$mean_rwl,pch=20,col=mates$location)
+plot(mates$belly.avg.bright.1,mates$mean_lts,pch=20,col=mates$location)
+plot(mates$belly.avg.bright.1,mates$mean_rts,pch=20,col=mates$location)
+plot(mates$belly.avg.bright.1,mates$breast.avg.bright,pch=20,col=mates$location)
+plot(mates$belly.avg.bright.1,mates$throat.avg.bright,pch=20,col=mates$location)
+plot(mates$belly.avg.bright.1,mates$vent.avg.bright,pch=20,col=mates$location)
+plot(mates$belly.avg.bright.1,mates$bird_mass,pch=20,col=mates$location)
+
+cor.test(mates$belly.avg.bright.1,mates$proportion.rustica.ancestry,method="spearman")       
+cor.test(mates$belly.avg.bright.1,mates$d2h,method="spearman")                               ###                                               
+cor.test(mates$belly.avg.bright.1,mates$d13C_VPDB,method="spearman")                                    
+cor.test(mates$belly.avg.bright.1,mates$mean_rwl,method="spearman")                          
+cor.test(mates$belly.avg.bright.1,mates$mean_lts,method="spearman")                          
+cor.test(mates$belly.avg.bright.1,mates$mean_rts,method="spearman")                 
+cor.test(mates$belly.avg.bright.1,mates$breast.avg.bright,method="spearman")                
+cor.test(mates$belly.avg.bright.1,mates$throat.avg.bright,method="spearman")
+cor.test(mates$belly.avg.bright.1,mates$vent.avg.bright,method="spearman")                  
+cor.test(mates$belly.avg.bright.1,mates$bird_mass,method="spearman")                         ###
+
+
+# FEMALE variables against MALE throat average brightness
+
+par(mfrow=c(4,3))
+
+plot(mates$throat.avg.bright,mates$proportion.rustica.ancestry.1,pch=20,col=mates$location)
+plot(mates$throat.avg.bright,mates$d2h.1,pch=20,col=mates$location)
+plot(mates$throat.avg.bright,mates$d13C_VPDB.1,pch=20,col=mates$location)
+plot(mates$throat.avg.bright,mates$mean_rwl.1,pch=20,col=mates$location)
+plot(mates$throat.avg.bright,mates$mean_lts.1,pch=20,col=mates$location)
+plot(mates$throat.avg.bright,mates$mean_rts.1,pch=20,col=mates$location)
+plot(mates$throat.avg.bright,mates$belly.avg.bright.1,pch=20,col=mates$location)
+plot(mates$throat.avg.bright,mates$breast.avg.bright.1,pch=20,col=mates$location)
+plot(mates$throat.avg.bright,mates$vent.avg.bright.1,pch=20,col=mates$location)
+plot(mates$throat.avg.bright,mates$bird_mass.1,pch=20,col=mates$location)
+
+cor.test(mates$throat.avg.bright,mates$proportion.rustica.ancestry.1,method="spearman")       
+cor.test(mates$throat.avg.bright,mates$d2h.1,method="spearman")                         
+cor.test(mates$throat.avg.bright,mates$d13C_VPDB.1,method="spearman")                                      
+cor.test(mates$throat.avg.bright,mates$mean_rwl.1,method="spearman")                          
+cor.test(mates$throat.avg.bright,mates$mean_lts.1,method="spearman")                        ###
+cor.test(mates$throat.avg.bright,mates$mean_rts.1,method="spearman")      
+cor.test(mates$throat.avg.bright,mates$belly.avg.bright.1,method="spearman")                              
+cor.test(mates$throat.avg.bright,mates$breast.avg.bright.1,method="spearman")                 
+cor.test(mates$throat.avg.bright,mates$vent.avg.bright.1,method="spearman")                         
+cor.test(mates$throat.avg.bright,mates$bird_mass.1,method="spearman")                       ###           
+
+# MALE variables against FEMALE throat average brightness
+
+par(mfrow=c(4,3))
+
+plot(mates$throat.avg.bright.1,mates$proportion.rustica.ancestry,pch=20,col=mates$location)
+plot(mates$throat.avg.bright.1,mates$d2h,pch=20,col=mates$location)
+plot(mates$throat.avg.bright.1,mates$d13C_VPDB,pch=20,col=mates$location)
+plot(mates$throat.avg.bright.1,mates$mean_rwl,pch=20,col=mates$location)
+plot(mates$throat.avg.bright.1,mates$mean_lts,pch=20,col=mates$location)
+plot(mates$throat.avg.bright.1,mates$mean_rts,pch=20,col=mates$location)
+plot(mates$throat.avg.bright.1,mates$belly.avg.bright,pch=20,col=mates$location)
+plot(mates$throat.avg.bright.1,mates$breast.avg.bright,pch=20,col=mates$location)
+plot(mates$throat.avg.bright.1,mates$vent.avg.bright,pch=20,col=mates$location)
+plot(mates$throat.avg.bright.1,mates$bird_mass,pch=20,col=mates$location)
+
+cor.test(mates$throat.avg.bright.1,mates$proportion.rustica.ancestry,method="spearman")       
+cor.test(mates$throat.avg.bright.1,mates$d2h,method="spearman")                                                                            
+cor.test(mates$throat.avg.bright.1,mates$d13C_VPDB,method="spearman")                         ###                                 
+cor.test(mates$throat.avg.bright.1,mates$mean_rwl,method="spearman")                          
+cor.test(mates$throat.avg.bright.1,mates$mean_lts,method="spearman")                          
+cor.test(mates$throat.avg.bright.1,mates$mean_rts,method="spearman")   
+cor.test(mates$throat.avg.bright.1,mates$belly.avg.bright,method="spearman")                  ###
+cor.test(mates$throat.avg.bright.1,mates$breast.avg.bright,method="spearman")                
+cor.test(mates$throat.avg.bright.1,mates$vent.avg.bright,method="spearman")                   ###         
+cor.test(mates$throat.avg.bright.1,mates$bird_mass,method="spearman")                         
+
+
+
+
+
 
 ### Evaluate relationships for specific localities--------------------------
 
